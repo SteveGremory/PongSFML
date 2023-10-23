@@ -21,8 +21,10 @@ private:
 	Player m_player_one;
 	Player m_player_two;
 
-	size_t m_p1_score;
-	size_t m_p2_score;
+	int m_p1_score;
+	int m_p2_score;
+
+	unsigned int m_rounds{1};
 
 	Pong::Text m_p1_score_label;
 	Pong::Text m_p2_score_label;

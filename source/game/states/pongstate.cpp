@@ -1,7 +1,7 @@
 #include "pongstate.hpp"
 
 constexpr auto PLAYER_SPEED = 1000.0f;
-constexpr auto BALL_SPEED = 200.0f;
+constexpr auto BALL_SPEED = 300.0f;
 
 PongState::PongState(sf::Font& font)
 	: m_player_one({DIMENSIONS.x * 0.05f, DIMENSIONS.y * 0.5f}, DIMENSIONS.y),
@@ -34,6 +34,10 @@ auto PongState::check_collision(sf::RectangleShape& one,
 
 auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
 
+	if (this->m_rounds == 5) {
+		return false;
+	}
+
 	sf::Event event;
 	while (window.pollEvent(event)) {
 		// If the close button was pressed
@@ -42,17 +46,6 @@ auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
 
 		case sf::Event::KeyPressed: {
 			switch (event.key.scancode) {
-
-			case sf::Keyboard::Scan::Backspace:
-				this->m_p1_score++;
-				this->m_p2_score++;
-
-				this->m_p1_score_label.set_text(
-					std::to_string(this->m_p1_score));
-				this->m_p2_score_label.set_text(
-					std::to_string(this->m_p2_score));
-
-				break;
 
 			case sf::Keyboard::Scan::Escape:
 				this->should_exit = true;
@@ -96,26 +89,43 @@ auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
 		this->m_player_two.move(PLAYER_SPEED * dt);
 	}
 
-	window.draw(this->m_ball.get_drawable());
-
 	if (this->check_collision(this->m_ball.get_drawable(),
 							  this->m_player_one.get_drawable())) {
 		// Left collision
 		m_ball.reverse_velocity(
-			Direction::LEFT, this->m_player_one.get_drawable().getPosition());
-		std::cout << "CRASH WITH THE LEFT BAT" << std::endl;
-	} else {
-		m_ball.move(dt, DIMENSIONS.y);
+			this->m_player_one.get_drawable().getPosition());
 	}
+
 	if (this->check_collision(this->m_ball.get_drawable(),
 							  this->m_player_two.get_drawable())) {
 		// Right collision
 		m_ball.reverse_velocity(
-			Direction::RIGHT, this->m_player_two.get_drawable().getPosition());
-		std::cout << "CRASH WITH THE RIGHT BAT" << std::endl;
-	} else {
-		m_ball.move(dt, DIMENSIONS.y);
+			this->m_player_two.get_drawable().getPosition());
 	}
+
+	m_ball.move(dt, DIMENSIONS);
+
+	if (m_ball.get_drawable().getPosition().x <= 0.0f) {
+		m_p2_score++;
+		this->m_rounds++;
+		this->m_p2_score_label.set_text(std::to_string(this->m_p2_score));
+
+		this->m_ball.reset({DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.5f},
+						   {BALL_SPEED, BALL_SPEED});
+
+	} else if (m_ball.get_drawable().getPosition().x +
+				   m_ball.get_drawable().getSize().x >=
+			   window.getSize().x) {
+
+		m_p1_score++;
+		this->m_rounds++;
+
+		this->m_p1_score_label.set_text(std::to_string(this->m_p1_score));
+		this->m_ball.reset({DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.5f},
+						   {BALL_SPEED, BALL_SPEED});
+	}
+
+	window.draw(this->m_ball.get_drawable());
 
 	window.draw(this->m_player_one.get_drawable());
 	window.draw(this->m_player_two.get_drawable());

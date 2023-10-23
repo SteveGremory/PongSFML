@@ -7,7 +7,7 @@ Ball::Ball(sf::Vector2f pos, sf::Vector2f size, sf::Vector2f velocity)
 	m_ball.setPosition(this->m_position);
 }
 
-auto Ball::move(float dt, unsigned int window_height) -> void {
+auto Ball::move(float dt, const sf::Vector2u& window_dimensions) -> void {
 
 	// move the ball
 	this->m_position += this->m_velocity * dt;
@@ -16,16 +16,15 @@ auto Ball::move(float dt, unsigned int window_height) -> void {
 	if (this->m_position.y <= 0.0f) {
 		this->m_velocity.y = -this->m_velocity.y;
 		this->m_position.y = 0.0f;
-	} else if (this->m_position.y + this->m_size.y >= window_height) {
+	} else if (this->m_position.y + this->m_size.y >= window_dimensions.y) {
 		this->m_velocity.y = -this->m_velocity.y;
-		this->m_position.y = window_height - this->m_size.y;
+		this->m_position.y = window_dimensions.y - this->m_size.y;
 	}
 
 	this->m_ball.setPosition(this->m_position);
 }
 
-auto Ball::reverse_velocity(Direction dir, const sf::Vector2f& player_pos)
-	-> void {
+auto Ball::reverse_velocity(const sf::Vector2f& player_pos) -> void {
 
 	// reverse horizontal velocity
 	this->m_velocity.x = -this->m_velocity.x;
@@ -40,4 +39,10 @@ auto Ball::reverse_velocity(Direction dir, const sf::Vector2f& player_pos)
 
 auto Ball::get_drawable() -> sf::RectangleShape& { return this->m_ball; }
 
-auto Ball::reset(sf::Vector2f position, sf::Vector2f velocity) -> void {}
+auto Ball::reset(const sf::Vector2f position, const sf::Vector2f velocity)
+	-> void {
+	this->m_position = position;
+	this->m_velocity = velocity;
+
+	this->m_ball.setPosition(position);
+}

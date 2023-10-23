@@ -11,16 +11,19 @@
 Game::Game(std::vector<std::unique_ptr<GameState>>& states)
 	: m_current_state_idx(0), m_states(std::move(states)),
 	  m_window(sf::RenderWindow(sf::VideoMode(DIMENSIONS), "Pong")) {
-	this->m_window.setVerticalSyncEnabled(true);
+	// this->m_window.setVerticalSyncEnabled(true);
 }
 Game::~Game() {}
 
 auto Game::game_loop() -> void {
+	size_t fps = 0;
 	float delta_time = 0.0f;
 
 	Timer timer{};
+	Timer timer2{};
 
 	while (this->m_window.isOpen()) {
+		fps++;
 		// clear the window with black color
 		this->m_window.clear(sf::Color::Black);
 
@@ -28,6 +31,12 @@ auto Game::game_loop() -> void {
 
 		delta_time = timer.elapsed_time();
 		timer.reset();
+
+		if (timer2.elapsed_time() >= 1) {
+			std::cout << fps << '\n';
+			fps = 0;
+			timer2.reset();
+		}
 
 		if (!current_state->tick(delta_time, this->m_window)) {
 			if (current_state->should_exit_game()) {
