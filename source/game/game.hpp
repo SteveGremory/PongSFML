@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <array>
 
-constexpr sf::Vector2u DIMENSIONS{1366, 768};
+constexpr sf::Vector2u DIMENSIONS{1280, 720};
 
 class GameState {
 public:

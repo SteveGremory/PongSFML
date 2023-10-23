@@ -29,12 +29,13 @@ auto Game::game_loop() -> void {
 		delta_time = timer.elapsed_time();
 		timer.reset();
 
-		if (current_state->tick(delta_time, this->m_window)) {
+		if (!current_state->tick(delta_time, this->m_window)) {
 			if (current_state->should_exit_game()) {
 				this->m_window.close();
 			}
 
 			m_current_state_idx = (m_current_state_idx + 1) % m_states.size();
+			std::cout << m_current_state_idx << std::endl;
 		}
 
 		// end the current frame

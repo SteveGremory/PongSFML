@@ -4,7 +4,7 @@
 MenuState::MenuState(const sf::Font& font, const sf::Vector2u dimensions)
 	: m_menu(font, dimensions) {}
 
-auto MenuState::tick(float dt, sf::RenderWindow& window) -> bool {
+auto MenuState::tick(float, sf::RenderWindow& window) -> bool {
 
 	sf::Event event;
 	while (window.pollEvent(event)) {
@@ -24,12 +24,12 @@ auto MenuState::tick(float dt, sf::RenderWindow& window) -> bool {
 
 			case sf::Keyboard::Scan::Enter:
 				if (this->m_menu.is_start_selected()) {
-					std::cout << "Starting the game..." << std::endl;
+					return false;
 				} else {
-					// Same as sf::Event::Closed.
 					this->should_exit = true;
 					return false;
 				}
+
 				break;
 
 			default:

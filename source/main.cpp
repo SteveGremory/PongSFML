@@ -1,4 +1,5 @@
 #include "game/states/menustate.hpp"
+#include "game/states/pongstate.hpp"
 
 #include "game/game.hpp"
 
@@ -19,6 +20,7 @@ auto main() -> int {
 	std::vector<std::unique_ptr<GameState>> states;
 
 	states.emplace_back(std::make_unique<MenuState>(font, DIMENSIONS));
+	states.emplace_back(std::make_unique<PongState>(font));
 
 	Game game(states);
 
