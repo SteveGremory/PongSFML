@@ -1,15 +1,35 @@
 #include "pongstate.hpp"
 
 constexpr auto PLAYER_SPEED = 1000.0f;
+constexpr auto BALL_SPEED = 200.0f;
 
 PongState::PongState(sf::Font& font)
 	: m_player_one({DIMENSIONS.x * 0.05f, DIMENSIONS.y * 0.5f}, DIMENSIONS.y),
 	  m_player_two({DIMENSIONS.x * 0.95f, DIMENSIONS.y * 0.5f}, DIMENSIONS.y),
-	  p1_score(0), p2_score(0),
-	  p1_score_label("0", font, Pong::FontSize::FONT_BIG),
-	  p2_score_label("0", font, Pong::FontSize::FONT_BIG) {
-	p1_score_label.set_position({DIMENSIONS.x * 0.2f, DIMENSIONS.x * 0.1f});
-	p2_score_label.set_position({DIMENSIONS.x * 0.8f, DIMENSIONS.x * 0.1f});
+	  m_p1_score(0), m_p2_score(0),
+	  m_p1_score_label("0", font, Pong::FontSize::FONT_BIG),
+	  m_p2_score_label("0", font, Pong::FontSize::FONT_BIG),
+	  m_ball({DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.5f}, {20, 20},
+			 {BALL_SPEED, BALL_SPEED}) {
+	this->m_p1_score_label.set_position(
+		{DIMENSIONS.x * 0.2f, DIMENSIONS.x * 0.1f});
+	this->m_p2_score_label.set_position(
+		{DIMENSIONS.x * 0.8f, DIMENSIONS.x * 0.1f});
+}
+
+auto PongState::check_collision(sf::RectangleShape& one,
+								sf::RectangleShape& two) -> bool {
+	// collision x-axis?
+	bool collision_x =
+		one.getPosition().x + one.getSize().x >= two.getPosition().x &&
+		two.getPosition().x + two.getSize().x >= one.getPosition().x;
+	// collision y-axis?
+	bool collision_y =
+		one.getPosition().y + one.getSize().y >= two.getPosition().y &&
+		two.getPosition().y + two.getSize().y >= one.getPosition().y;
+
+	// collision only if on both axes
+	return collision_x && collision_y;
 }
 
 auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
@@ -24,11 +44,13 @@ auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
 			switch (event.key.scancode) {
 
 			case sf::Keyboard::Scan::Backspace:
-				p1_score++;
-				p2_score++;
+				this->m_p1_score++;
+				this->m_p2_score++;
 
-				p1_score_label.set_text(std::to_string(p1_score));
-				p2_score_label.set_text(std::to_string(p2_score));
+				this->m_p1_score_label.set_text(
+					std::to_string(this->m_p1_score));
+				this->m_p2_score_label.set_text(
+					std::to_string(this->m_p2_score));
 
 				break;
 
@@ -74,11 +96,32 @@ auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
 		this->m_player_two.move(PLAYER_SPEED * dt);
 	}
 
+	window.draw(this->m_ball.get_drawable());
+
+	if (this->check_collision(this->m_ball.get_drawable(),
+							  this->m_player_one.get_drawable())) {
+		// Left collision
+		m_ball.reverse_velocity(
+			Direction::LEFT, this->m_player_one.get_drawable().getPosition());
+		std::cout << "CRASH WITH THE LEFT BAT" << std::endl;
+	} else {
+		m_ball.move(dt, DIMENSIONS.y);
+	}
+	if (this->check_collision(this->m_ball.get_drawable(),
+							  this->m_player_two.get_drawable())) {
+		// Right collision
+		m_ball.reverse_velocity(
+			Direction::RIGHT, this->m_player_two.get_drawable().getPosition());
+		std::cout << "CRASH WITH THE RIGHT BAT" << std::endl;
+	} else {
+		m_ball.move(dt, DIMENSIONS.y);
+	}
+
 	window.draw(this->m_player_one.get_drawable());
 	window.draw(this->m_player_two.get_drawable());
 
-	window.draw(this->p1_score_label.get_sfml_text());
-	window.draw(this->p2_score_label.get_sfml_text());
+	window.draw(this->m_p1_score_label.get_sfml_text());
+	window.draw(this->m_p2_score_label.get_sfml_text());
 
 	return true;
 }

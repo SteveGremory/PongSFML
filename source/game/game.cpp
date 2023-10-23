@@ -35,7 +35,6 @@ auto Game::game_loop() -> void {
 			}
 
 			m_current_state_idx = (m_current_state_idx + 1) % m_states.size();
-			std::cout << m_current_state_idx << std::endl;
 		}
 
 		// end the current frame
