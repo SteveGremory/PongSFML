@@ -4,18 +4,32 @@ constexpr auto PLAYER_SPEED = 1000.0f;
 constexpr auto BALL_SPEED = 400.0f;
 constexpr auto MAX_ROUNDS = 5;
 
+constexpr auto SPRITE_HEIGHT = 120.0f;
+constexpr auto SPRITE_WIDTH = 10.0f;
+
 PongState::PongState(sf::Font& font)
-	: m_player_one({DIMENSIONS.x * 0.05f, DIMENSIONS.y * 0.5f}, DIMENSIONS.y),
-	  m_player_two({DIMENSIONS.x * 0.95f, DIMENSIONS.y * 0.5f}, DIMENSIONS.y),
+	// Init player characters
+	: m_player_one({DIMENSIONS.x * 0.05f, DIMENSIONS.y * 0.5f}, DIMENSIONS.y,
+				   {SPRITE_WIDTH, SPRITE_HEIGHT}),
+	  m_player_two({DIMENSIONS.x * 0.95f, DIMENSIONS.y * 0.5f}, DIMENSIONS.y,
+				   {SPRITE_WIDTH, SPRITE_HEIGHT}),
+
+	  // Init player points
 	  m_p1_score(0), m_p2_score(0),
+
+	  // Init game labels
 	  m_p1_score_label("0", font, Pong::FontSize::FONT_BIG),
 	  m_p2_score_label("0", font, Pong::FontSize::FONT_BIG),
-
 	  m_game_over_label("Game over!", font, Pong::FontSize::FONT_BIG),
 	  m_winner_label("0", font, Pong::FontSize::FONT_MEDIUM),
+
+	  // Init ball
 	  m_ball({DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.5f}, {20, 20},
 			 {BALL_SPEED, BALL_SPEED}),
+
+	  // Init sounds
 	  collision_sound(this->collision_sound_buffer) {
+
 	// Set both the players' scores' positions.
 	this->m_p1_score_label.set_position(
 		{DIMENSIONS.x * 0.2f, DIMENSIONS.x * 0.1f});
@@ -28,13 +42,13 @@ PongState::PongState(sf::Font& font)
 	this->m_winner_label.set_position(
 		{DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.4f});
 
+	// Configure the sound
 	std::filesystem::path collision_sound_path("../assets/ball_smash.mp3");
 	if (!this->collision_sound_buffer.loadFromFile(collision_sound_path)) {
 		// Handle error - sound file not found
 		throw std::filesystem::filesystem_error(
 			"Could not open the collision file.", std::error_code());
 	}
-
 	this->collision_sound.setVolume(50.0f);
 }
 
@@ -77,11 +91,13 @@ auto PongState::end_game() -> void {
 
 auto PongState::handle_scores_ball_reset(int& player_score,
 										 Pong::Text& score_label, Ball& ball,
-										 unsigned int& rounds) -> void {
+										 unsigned int& rounds,
+										 const sf::Vector2f& window_size)
+	-> void {
 	player_score++;
 	rounds++;
 	score_label.set_text(std::to_string(player_score));
-	ball.reset({DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.5f},
+	ball.reset({window_size.x * 0.5f, window_size.y * 0.5f},
 			   {BALL_SPEED, BALL_SPEED});
 }
 
@@ -105,6 +121,12 @@ auto PongState::tick(const double& dt, sf::RenderWindow& window) -> bool {
 		// If the close button was pressed
 		// then close the window
 		switch (event.type) {
+		case sf::Event::Resized: {
+			window.setSize({event.size.width, event.size.height});
+
+			// Resize the ball
+			break;
+		}
 
 		case sf::Event::Closed:
 			// Set should_exit to true so that
@@ -153,7 +175,7 @@ auto PongState::tick(const double& dt, sf::RenderWindow& window) -> bool {
 		this->collision_sound.play();
 	} else if (ball_drawable.getPosition().x <= 0.0f ||
 			   ball_drawable.getPosition().x + ball_drawable.getSize().x >=
-				   window.getSize().x) {
+				   window.getView().getSize().x) {
 
 		// Ball goes out of bounds
 		int& player_score =
@@ -163,10 +185,11 @@ auto PongState::tick(const double& dt, sf::RenderWindow& window) -> bool {
 									  ? m_p2_score_label
 									  : m_p1_score_label;
 
-		handle_scores_ball_reset(player_score, score_label, m_ball, m_rounds);
+		handle_scores_ball_reset(player_score, score_label, m_ball, m_rounds,
+								 window.getView().getSize());
 	} else {
 		// only move the ball if required
-		m_ball.move(dt, DIMENSIONS);
+		m_ball.move(dt, window.getView().getSize());
 	}
 
 	window.draw(ball_drawable);

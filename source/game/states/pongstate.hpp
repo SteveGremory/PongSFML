@@ -30,7 +30,8 @@ private:
 	auto end_game() -> void;
 
 	auto handle_scores_ball_reset(int& player_score, Pong::Text& score_label,
-								  Ball& ball, unsigned int& rounds) -> void;
+								  Ball& ball, unsigned int& rounds,
+								  const sf::Vector2f& window_size) -> void;
 
 	auto check_collision(sf::RectangleShape& one, sf::RectangleShape& two)
 		-> bool;

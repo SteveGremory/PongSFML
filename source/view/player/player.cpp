@@ -2,12 +2,10 @@
 
 #include <iostream>
 
-constexpr auto SPRITE_HEIGHT = 120.0f;
-constexpr auto SPRITE_WIDTH = 10.0f;
-
-Player::Player(const sf::Vector2f initial_position, const double max_height)
-	: m_position(initial_position), m_max_height(max_height),
-	  m_rect_shape(sf::Vector2f(SPRITE_WIDTH, SPRITE_HEIGHT)) {
+Player::Player(const sf::Vector2f initial_position,
+			   const double max_screen_height, sf::Vector2f player_size)
+	: m_position(initial_position), m_max_height(max_screen_height),
+	  m_rect_shape(player_size) {
 
 	this->m_rect_shape.setPosition(initial_position);
 }
@@ -20,7 +18,8 @@ auto Player::move(double delta_y) -> void {
 
 	// Clamp it to the max height of the screen - that of the player
 	y = std::clamp(y, 0.0f,
-				   static_cast<float>(this->m_max_height) - SPRITE_HEIGHT);
+				   static_cast<float>(this->m_max_height) -
+					   this->m_rect_shape.getSize().y);
 
 	this->m_rect_shape.setPosition({x, y});
 }

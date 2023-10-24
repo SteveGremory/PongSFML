@@ -28,7 +28,7 @@ public:
 	 * @param dt - The time elapsed since the last frame.
 	 * @param window_dimensions - The dimensions of the game window.
 	 */
-	auto move(const double dt, const sf::Vector2u& window_dimensions) -> void;
+	auto move(const double dt, const sf::Vector2f& window_dimensions) -> void;
 
 	/**
 	 * @brief Resets the ball's position and velocity.
@@ -38,6 +38,13 @@ public:
 	 */
 	auto reset(const sf::Vector2f position, const sf::Vector2f velocity)
 		-> void;
+
+	/**
+	 * @brief Set the ball's position
+	 *
+	 * @param position - The position of the ball
+	 */
+	auto setpos(const sf::Vector2f& position) -> void;
 
 	/**
 	 * @brief Retrieves a reference to the SFML RectangleShape representing the

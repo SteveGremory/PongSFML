@@ -9,9 +9,12 @@ public:
 	 * height.
 	 *
 	 * @param initial_position - The initial position of the player character.
-	 * @param max_height - The maximum height the player can reach in the game.
+	 * @param max_screen_height - The maximum height the player can reach in the
+	 * game.
+	 * @param player_size: The initial size of the player character.
 	 */
-	Player(const sf::Vector2f initial_position, const double max_height);
+	Player(const sf::Vector2f initial_position, const double max_screen_height,
+		   const sf::Vector2f player_size);
 
 	/**
 	 * @brief Destroys the Player object.
