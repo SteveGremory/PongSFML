@@ -1,7 +1,7 @@
 #include "pongstate.hpp"
 
 constexpr auto PLAYER_SPEED = 1000.0f;
-constexpr auto BALL_SPEED = 400.0f;
+constexpr auto BALL_SPEED = 600.0f;
 constexpr auto MAX_ROUNDS = 5;
 
 constexpr auto SPRITE_HEIGHT = 120.0f;
@@ -143,19 +143,20 @@ auto PongState::tick(const double& dt, sf::RenderWindow& window) -> bool {
 
 	// Player movement
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		this->m_player_one.move(-PLAYER_SPEED * dt);
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-		this->m_player_one.move(PLAYER_SPEED * dt);
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		this->m_player_two.move(-PLAYER_SPEED * dt);
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
 		this->m_player_two.move(PLAYER_SPEED * dt);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+		this->m_player_one.move(-PLAYER_SPEED * dt);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+
+		this->m_player_one.move(PLAYER_SPEED * dt);
 	}
 
 	// Get SFML drawables all at once for later use.
