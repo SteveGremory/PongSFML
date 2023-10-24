@@ -3,7 +3,7 @@
 #include "utils/io.hpp"
 #include "utils/physics.hpp"
 
-constexpr auto PLAYER_SPEED = 1000.0f;
+constexpr auto PLAYER_SPEED = 1500.0f;
 constexpr auto BALL_SPEED = 600.0f;
 constexpr auto MAX_ROUNDS = 5;
 constexpr auto INC_VELOCITY = 50.f;
