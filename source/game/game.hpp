@@ -3,8 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include <array>
 
-constexpr sf::Vector2u DIMENSIONS{1280, 720};
-
 class GameState {
 public:
 	/**
@@ -65,8 +63,10 @@ public:
 	 *
 	 * @param states - A vector of unique pointers to GameState objects
 	 * representing different game states.
+	 * @param dimensions - The dimensions of the window to be constructed.
 	 */
-	Game(std::vector<std::unique_ptr<GameState>>& states);
+	Game(std::vector<std::unique_ptr<GameState>>& states,
+		 const sf::Vector2u& dimensions);
 
 	/**
 	 * @brief Destroys the Game object.

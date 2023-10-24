@@ -7,6 +7,8 @@
 #include <memory>
 #include <span>
 
+constexpr sf::Vector2u DIMENSIONS{1280, 720};
+
 auto main() -> int {
 
 	// Hardcoded path to the font
@@ -20,9 +22,9 @@ auto main() -> int {
 	std::vector<std::unique_ptr<GameState>> states;
 
 	states.emplace_back(std::make_unique<MenuState>(font, DIMENSIONS));
-	states.emplace_back(std::make_unique<PongState>(font));
+	states.emplace_back(std::make_unique<PongState>(font, DIMENSIONS));
 
-	Game game(states);
+	Game game(states, DIMENSIONS);
 
 	game.game_loop();
 

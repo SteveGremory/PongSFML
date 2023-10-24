@@ -14,7 +14,7 @@ public:
 	/**
 	 * @brief Inherited from GameState.
 	 */
-	PongState(sf::Font& font);
+	PongState(sf::Font& font, const sf::Vector2u& dimensions);
 
 	/**
 	 * @brief Inherited from GameState.
@@ -27,7 +27,7 @@ public:
 	auto tick(const double& dt, sf::RenderWindow& window) -> bool final;
 
 private:
-	auto init_game() -> void;
+	auto init_game(const sf::Vector2u& dimensions) -> void;
 	auto init_sounds() -> void;
 
 	auto end_game() -> void;

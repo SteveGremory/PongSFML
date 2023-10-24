@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-MenuState::MenuState(const sf::Font& font, const sf::Vector2u dimensions)
+MenuState::MenuState(const sf::Font& font, const sf::Vector2u& dimensions)
 	: m_menu(font, dimensions), startup_sound(this->sound_buffer) {
 
 	utils::load_sound(this->sound_buffer, "../assets/game_start.mp3");

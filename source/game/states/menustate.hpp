@@ -10,7 +10,7 @@ public:
 	/**
 	 * @brief Inherited from GameState.
 	 */
-	MenuState(const sf::Font& font, const sf::Vector2u dimensions);
+	MenuState(const sf::Font& font, const sf::Vector2u& dimensions);
 
 	/**
 	 * @brief Inherited from GameState.

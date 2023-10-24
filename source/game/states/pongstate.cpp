@@ -10,11 +10,11 @@ constexpr auto MAX_ROUNDS = 5;
 constexpr auto SPRITE_HEIGHT = 120.0f;
 constexpr auto SPRITE_WIDTH = 10.0f;
 
-PongState::PongState(sf::Font& font)
+PongState::PongState(sf::Font& font, const sf::Vector2u& dimensions)
 	// Init player characters
-	: m_player_one({DIMENSIONS.x * 0.05f, DIMENSIONS.y * 0.5f}, DIMENSIONS.y,
+	: m_player_one({dimensions.x * 0.05f, dimensions.y * 0.5f}, dimensions.y,
 				   {SPRITE_WIDTH, SPRITE_HEIGHT}),
-	  m_player_two({DIMENSIONS.x * 0.95f, DIMENSIONS.y * 0.5f}, DIMENSIONS.y,
+	  m_player_two({dimensions.x * 0.95f, dimensions.y * 0.5f}, dimensions.y,
 				   {SPRITE_WIDTH, SPRITE_HEIGHT}),
 
 	  // Init player points
@@ -27,29 +27,29 @@ PongState::PongState(sf::Font& font)
 	  m_winner_label("0", font, Pong::FontSize::FONT_MEDIUM),
 
 	  // Init ball
-	  m_ball({DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.5f}, {20, 20},
+	  m_ball({dimensions.x * 0.5f, dimensions.y * 0.5f}, {20, 20},
 			 {BALL_SPEED, BALL_SPEED}),
 
 	  // Init sounds
 	  collision_sound(this->collision_sound_buffer),
 	  oob_sound(this->oob_sound_buffer), end_sound(this->end_sound_buffer) {
 
-	this->init_game();
+	this->init_game(dimensions);
 	this->init_sounds();
 }
 
-auto PongState::init_game() -> void {
+auto PongState::init_game(const sf::Vector2u& dimensions) -> void {
 	// Set both the players' scores' positions.
 	this->m_p1_score_label.set_position(
-		{DIMENSIONS.x * 0.2f, DIMENSIONS.x * 0.1f});
+		{dimensions.x * 0.2f, dimensions.x * 0.1f});
 	this->m_p2_score_label.set_position(
-		{DIMENSIONS.x * 0.8f, DIMENSIONS.x * 0.1f});
+		{dimensions.x * 0.8f, dimensions.x * 0.1f});
 
 	// Set the game over positions in advance.
 	this->m_game_over_label.set_position(
-		{DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.6f});
+		{dimensions.x * 0.5f, dimensions.y * 0.6f});
 	this->m_winner_label.set_position(
-		{DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.4f});
+		{dimensions.x * 0.5f, dimensions.y * 0.4f});
 }
 
 auto PongState::init_sounds() -> void {
@@ -125,8 +125,6 @@ auto PongState::tick(const double& dt, sf::RenderWindow& window) -> bool {
 		switch (event.type) {
 		case sf::Event::Resized: {
 			window.setSize({event.size.width, event.size.height});
-
-			// Resize the ball
 			break;
 		}
 
