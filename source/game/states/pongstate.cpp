@@ -1,5 +1,7 @@
 #include "pongstate.hpp"
+
 #include "utils/io.hpp"
+#include "utils/physics.hpp"
 
 constexpr auto PLAYER_SPEED = 1000.0f;
 constexpr auto BALL_SPEED = 600.0f;
@@ -32,6 +34,11 @@ PongState::PongState(sf::Font& font)
 	  collision_sound(this->collision_sound_buffer),
 	  oob_sound(this->oob_sound_buffer), end_sound(this->end_sound_buffer) {
 
+	this->init_game();
+	this->init_sounds();
+}
+
+auto PongState::init_game() -> void {
 	// Set both the players' scores' positions.
 	this->m_p1_score_label.set_position(
 		{DIMENSIONS.x * 0.2f, DIMENSIONS.x * 0.1f});
@@ -43,28 +50,15 @@ PongState::PongState(sf::Font& font)
 		{DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.6f});
 	this->m_winner_label.set_position(
 		{DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.4f});
+}
 
+auto PongState::init_sounds() -> void {
 	// Configure the sound
 	utils::load_sound(this->collision_sound_buffer, "../assets/ball_smash.mp3");
 	utils::load_sound(this->end_sound_buffer, "../assets/game_over.mp3");
 	utils::load_sound(this->oob_sound_buffer, "../assets/out_of_bounds.mp3");
 
 	this->collision_sound.setVolume(50.0f);
-}
-
-auto PongState::check_collision(sf::RectangleShape& one,
-								sf::RectangleShape& two) -> bool {
-	// collision x-axis?
-	bool collision_x =
-		one.getPosition().x + one.getSize().x >= two.getPosition().x &&
-		two.getPosition().x + two.getSize().x >= one.getPosition().x;
-	// collision y-axis?
-	bool collision_y =
-		one.getPosition().y + one.getSize().y >= two.getPosition().y &&
-		two.getPosition().y + two.getSize().y >= one.getPosition().y;
-
-	// collision only if on both axes
-	return collision_x && collision_y;
 }
 
 auto PongState::end_game() -> void {
@@ -87,6 +81,8 @@ auto PongState::end_game() -> void {
 	this->m_p2_score = 0;
 
 	this->m_rounds = 1;
+
+	this->end_sound.play();
 }
 
 auto PongState::handle_scores_ball_reset(int& player_score,
@@ -110,8 +106,6 @@ auto PongState::tick(const double& dt, sf::RenderWindow& window) -> bool {
 		window.draw(this->m_winner_label.get_sfml_text());
 
 		window.display();
-
-		end_sound.play();
 
 		// Wait for 5 seconds to display the main menu again
 		sf::sleep(sf::seconds(5.0f));
@@ -172,12 +166,12 @@ auto PongState::tick(const double& dt, sf::RenderWindow& window) -> bool {
 	sf::RectangleShape& player_one_drawable = m_player_one.get_drawable();
 	sf::RectangleShape& player_two_drawable = m_player_two.get_drawable();
 
-	if (check_collision(ball_drawable, player_one_drawable)) {
+	if (utils::check_collision(ball_drawable, player_one_drawable)) {
 
 		// Left collision
 		this->m_ball.reverse_velocity(player_one_drawable.getPosition());
 		this->collision_sound.play();
-	} else if (check_collision(ball_drawable, player_two_drawable)) {
+	} else if (utils::check_collision(ball_drawable, player_two_drawable)) {
 
 		// Right collision
 		this->m_ball.reverse_velocity(player_two_drawable.getPosition());

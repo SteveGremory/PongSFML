@@ -27,6 +27,9 @@ public:
 	auto tick(const double& dt, sf::RenderWindow& window) -> bool final;
 
 private:
+	auto init_game() -> void;
+	auto init_sounds() -> void;
+
 	auto end_game() -> void;
 
 	auto handle_scores_ball_reset(int& player_score, Pong::Text& score_label,

@@ -30,16 +30,23 @@ auto Game::game_loop() -> void {
 		throw std::filesystem::filesystem_error(
 			"Could not load in the background.", std::error_code());
 	}
+
 	sf::Sprite sprite{texture};
-	sf::Vector2u size = texture.getSize();
+
 	sprite.setTexture(texture);
 	sprite.setOrigin(sf::Vector2f(sprite.getTexture().getSize() / 2u));
 	sprite.setPosition(this->m_window.getView().getCenter());
+
+	sf::RectangleShape darkening_rect;
+	darkening_rect.setSize(
+		sf::Vector2f(texture.getSize().x, texture.getSize().y));
+	darkening_rect.setFillColor(sf::Color(0, 0, 0, 128));
 
 	while (this->m_window.isOpen()) {
 		// clear the window with black color
 		this->m_window.clear(sf::Color::Black);
 		this->m_window.draw(sprite);
+		this->m_window.draw(darkening_rect);
 
 		auto& current_state = this->m_states[this->m_current_state_idx];
 
