@@ -7,10 +7,10 @@ Ball::Ball(sf::Vector2f pos, sf::Vector2f size, sf::Vector2f velocity)
 	m_ball.setPosition(this->m_position);
 }
 
-auto Ball::move(float dt, const sf::Vector2u& window_dimensions) -> void {
+auto Ball::move(double dt, const sf::Vector2u& window_dimensions) -> void {
 
 	// move the ball
-	this->m_position += this->m_velocity * dt;
+	this->m_position += this->m_velocity * static_cast<float>(dt);
 	// check if outside window bounds; if so, reverse m_velocity and restore
 	// at correct m_position
 	if (this->m_position.y <= 0.0f) {

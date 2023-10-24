@@ -28,7 +28,7 @@ public:
 	 * @param dt - The time elapsed since the last frame.
 	 * @param window_dimensions - The dimensions of the game window.
 	 */
-	auto move(const float dt, const sf::Vector2u& window_dimensions) -> void;
+	auto move(const double dt, const sf::Vector2u& window_dimensions) -> void;
 
 	/**
 	 * @brief Resets the ball's position and velocity.

@@ -85,7 +85,7 @@ auto PongState::handle_scores_ball_reset(int& player_score,
 			   {BALL_SPEED, BALL_SPEED});
 }
 
-auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
+auto PongState::tick(const double& dt, sf::RenderWindow& window) -> bool {
 
 	if (this->m_rounds == MAX_ROUNDS + 1) {
 		this->end_game();

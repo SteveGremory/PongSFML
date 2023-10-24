@@ -34,7 +34,7 @@ public:
 	 * @return true if the game state should continue; otherwise, false to exit
 	 * the game.
 	 */
-	virtual auto tick(float dt, sf::RenderWindow& window) -> bool = 0;
+	virtual auto tick(const double& dt, sf::RenderWindow& window) -> bool = 0;
 
 	/**
 	 * @brief Checks if the game state should exit the game.
@@ -47,8 +47,8 @@ public:
 	inline auto should_exit_game() -> bool { return this->should_exit; };
 
 protected:
-	bool should_exit; // A flag indicating if the game state should trigger an
-					  // exit.
+	bool should_exit{false}; // A flag indicating if the game state should
+							 // trigger an exit.
 };
 
 /**

@@ -13,13 +13,12 @@ public:
 	void reset() { start = std::chrono::high_resolution_clock::now(); }
 
 	// Returns the elapsed time in seconds
-	auto elapsed_time() -> float {
+	auto elapsed_time() -> double {
 		auto const end = std::chrono::high_resolution_clock::now();
 
-		return std::chrono::duration_cast<std::chrono::microseconds>(end -
-																	 start)
+		return std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
 				   .count() /
-			   1000000.0f;
+			   1'000'000'000.0f;
 	}
 
 private:

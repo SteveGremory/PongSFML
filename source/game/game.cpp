@@ -11,13 +11,13 @@
 Game::Game(std::vector<std::unique_ptr<GameState>>& states)
 	: m_current_state_idx(0), m_states(std::move(states)),
 	  m_window(sf::RenderWindow(sf::VideoMode(DIMENSIONS), "Pong")) {
-	// this->m_window.setVerticalSyncEnabled(true);
+	this->m_window.setVerticalSyncEnabled(true);
 }
 Game::~Game() {}
 
 auto Game::game_loop() -> void {
 
-	float delta_time = 0.0f;
+	double delta_time = 0.0f;
 
 	Timer timer{};
 
@@ -31,6 +31,7 @@ auto Game::game_loop() -> void {
 		timer.reset();
 
 		if (!current_state->tick(delta_time, this->m_window)) {
+
 			if (current_state->should_exit_game()) {
 				this->m_window.close();
 			}

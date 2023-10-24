@@ -12,7 +12,7 @@ MenuState::MenuState(const sf::Font& font, const sf::Vector2u dimensions)
 	}
 }
 
-auto MenuState::tick(float, sf::RenderWindow& window) -> bool {
+auto MenuState::tick(const double&, sf::RenderWindow& window) -> bool {
 
 	sf::Event event;
 	while (window.pollEvent(event)) {

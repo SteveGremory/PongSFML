@@ -20,7 +20,7 @@ public:
 	/**
 	 * @brief Inherited from GameState.
 	 */
-	auto tick(float dt, sf::RenderWindow& window) -> bool final;
+	auto tick(const double& dt, sf::RenderWindow& window) -> bool final;
 
 private:
 	Pong::Menu m_menu;
