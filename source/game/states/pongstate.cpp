@@ -9,12 +9,21 @@ PongState::PongState(sf::Font& font)
 	  m_p1_score(0), m_p2_score(0),
 	  m_p1_score_label("0", font, Pong::FontSize::FONT_BIG),
 	  m_p2_score_label("0", font, Pong::FontSize::FONT_BIG),
+
+	  m_game_over_label("Game over!", font, Pong::FontSize::FONT_BIG),
+	  m_winner_label("0", font, Pong::FontSize::FONT_MEDIUM),
 	  m_ball({DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.5f}, {20, 20},
 			 {BALL_SPEED, BALL_SPEED}) {
+
 	this->m_p1_score_label.set_position(
 		{DIMENSIONS.x * 0.2f, DIMENSIONS.x * 0.1f});
 	this->m_p2_score_label.set_position(
 		{DIMENSIONS.x * 0.8f, DIMENSIONS.x * 0.1f});
+
+	this->m_game_over_label.set_position(
+		{DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.6f});
+	this->m_winner_label.set_position(
+		{DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.4f});
 }
 
 auto PongState::check_collision(sf::RectangleShape& one,
@@ -35,6 +44,34 @@ auto PongState::check_collision(sf::RectangleShape& one,
 auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
 
 	if (this->m_rounds == 5) {
+		int pt_diff = 0;
+
+		// The game has ended
+		if (this->m_p1_score > this->m_p2_score) {
+			pt_diff = this->m_p1_score - this->m_p2_score;
+			this->m_winner_label.set_text("P1 Wins by " +
+										  std::to_string(pt_diff) + " points.");
+		} else {
+			pt_diff = this->m_p2_score - this->m_p1_score;
+			this->m_winner_label.set_text("P2 Wins!" + std::to_string(pt_diff) +
+										  " points.");
+		}
+
+		window.draw(this->m_game_over_label.get_sfml_text());
+		window.draw(this->m_winner_label.get_sfml_text());
+
+		this->m_p1_score = 0;
+		this->m_p2_score = 0;
+
+		this->m_p1_score_label.set_text(std::to_string(this->m_p1_score));
+		this->m_p2_score_label.set_text(std::to_string(this->m_p2_score));
+
+		this->m_rounds = 0;
+
+		window.display();
+
+		sf::sleep(sf::seconds(5.0f));
+
 		return false;
 	}
 
@@ -43,22 +80,6 @@ auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
 		// If the close button was pressed
 		// then close the window
 		switch (event.type) {
-
-		case sf::Event::KeyPressed: {
-			switch (event.key.scancode) {
-
-			case sf::Keyboard::Scan::Escape:
-				this->should_exit = true;
-				return false;
-
-				break;
-
-			default:
-				break;
-			}
-
-			break;
-		}
 
 		case sf::Event::Closed:
 			// Set should_exit to true so that

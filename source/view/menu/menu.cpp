@@ -12,8 +12,8 @@ Menu::Menu(const sf::Font& font, const sf::Vector2u dimensions)
 	auto& [title, start, exit] = m_items;
 
 	title.set_position({dimensions.x * 0.5f, dimensions.y * 0.2f});
-	start.set_position({dimensions.x * 0.5f, dimensions.y * 0.4f});
-	exit.set_position({dimensions.x * 0.5f, dimensions.y * 0.5f});
+	start.set_position({dimensions.x * 0.5f, dimensions.y * 0.5f});
+	exit.set_position({dimensions.x * 0.5f, dimensions.y * 0.6f});
 }
 
 auto Menu::get_items() -> std::span<Text, 3> { return this->m_items; }

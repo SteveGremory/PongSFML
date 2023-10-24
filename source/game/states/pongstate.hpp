@@ -29,5 +29,8 @@ private:
 	Pong::Text m_p1_score_label;
 	Pong::Text m_p2_score_label;
 
+	Pong::Text m_game_over_label;
+	Pong::Text m_winner_label;
+
 	Ball m_ball;
 };
