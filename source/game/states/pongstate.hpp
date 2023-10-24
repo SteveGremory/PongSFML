@@ -52,9 +52,11 @@ private:
 
 	Ball m_ball;
 
-	// Load a sound buffer (replace with your sound file)
-	sf::SoundBuffer collision_sound_buffer;
-
+	// Load a sound buffer
 	// Create a sound object and set its buffer
+	sf::SoundBuffer collision_sound_buffer;
 	sf::Sound collision_sound;
+
+	sf::SoundBuffer oob_sound_buffer;
+	sf::Sound oob_sound;
 };

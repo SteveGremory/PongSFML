@@ -28,7 +28,8 @@ PongState::PongState(sf::Font& font)
 			 {BALL_SPEED, BALL_SPEED}),
 
 	  // Init sounds
-	  collision_sound(this->collision_sound_buffer) {
+	  collision_sound(this->collision_sound_buffer),
+	  oob_sound(this->oob_sound_buffer) {
 
 	// Set both the players' scores' positions.
 	this->m_p1_score_label.set_position(
@@ -50,6 +51,13 @@ PongState::PongState(sf::Font& font)
 			"Could not open the collision file.", std::error_code());
 	}
 	this->collision_sound.setVolume(50.0f);
+
+	std::filesystem::path oob_sound_path("../assets/out_of_bounds.mp3");
+	if (!this->oob_sound_buffer.loadFromFile(oob_sound_path)) {
+		// Handle error - sound file not found
+		throw std::filesystem::filesystem_error("Could not open the OOB file.",
+												std::error_code());
+	}
 }
 
 auto PongState::check_collision(sf::RectangleShape& one,
@@ -188,6 +196,9 @@ auto PongState::tick(const double& dt, sf::RenderWindow& window) -> bool {
 
 		handle_scores_ball_reset(player_score, score_label, m_ball, m_rounds,
 								 window.getView().getSize());
+
+		// Play OOB sound effect
+		this->oob_sound.play();
 	} else {
 		// only move the ball if required
 		m_ball.move(dt, window.getView().getSize());
