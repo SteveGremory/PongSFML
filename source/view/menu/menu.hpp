@@ -3,6 +3,8 @@
 #include "view/text/text.hpp"
 #include <span>
 
+#include <SFML/Audio.hpp>
+
 namespace Pong {
 
 class Menu {
@@ -43,6 +45,9 @@ public:
 private:
 	std::array<Text, 3> m_items;
 	bool start_selected{true};
+
+	sf::SoundBuffer btn_sound_buffer;
+	sf::Sound btn_sound;
 };
 
 } // namespace Pong

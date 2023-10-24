@@ -2,9 +2,9 @@
 
 #include <chrono>
 
-/**
- * @brief Simple timer class to keep track of the elapsed time
- */
+namespace utils { /**
+				   * @brief Simple timer class to keep track of the elapsed time
+				   */
 class Timer {
 public:
 	Timer() : start(std::chrono::high_resolution_clock::now()) {}
@@ -24,3 +24,4 @@ public:
 private:
 	std::chrono::time_point<std::chrono::high_resolution_clock> start = {};
 };
+} // namespace utils

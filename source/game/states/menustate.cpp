@@ -1,15 +1,12 @@
 #include "menustate.hpp"
+#include "utils/io.hpp"
+
 #include <iostream>
 
 MenuState::MenuState(const sf::Font& font, const sf::Vector2u dimensions)
 	: m_menu(font, dimensions), startup_sound(this->sound_buffer) {
 
-	std::filesystem::path collision_sound_path("../assets/beep_sound.mp3");
-	if (!this->sound_buffer.loadFromFile(collision_sound_path)) {
-		// Handle error - sound file not found
-		throw std::filesystem::filesystem_error("Could not open the beep file.",
-												std::error_code());
-	}
+	utils::load_sound(this->sound_buffer, "../assets/game_start.mp3");
 }
 
 auto MenuState::tick(const double&, sf::RenderWindow& window) -> bool {

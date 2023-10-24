@@ -1,4 +1,5 @@
 #include "pongstate.hpp"
+#include "utils/io.hpp"
 
 constexpr auto PLAYER_SPEED = 1000.0f;
 constexpr auto BALL_SPEED = 600.0f;
@@ -29,7 +30,7 @@ PongState::PongState(sf::Font& font)
 
 	  // Init sounds
 	  collision_sound(this->collision_sound_buffer),
-	  oob_sound(this->oob_sound_buffer) {
+	  oob_sound(this->oob_sound_buffer), end_sound(this->end_sound_buffer) {
 
 	// Set both the players' scores' positions.
 	this->m_p1_score_label.set_position(
@@ -44,20 +45,11 @@ PongState::PongState(sf::Font& font)
 		{DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.4f});
 
 	// Configure the sound
-	std::filesystem::path collision_sound_path("../assets/ball_smash.mp3");
-	if (!this->collision_sound_buffer.loadFromFile(collision_sound_path)) {
-		// Handle error - sound file not found
-		throw std::filesystem::filesystem_error(
-			"Could not open the collision file.", std::error_code());
-	}
-	this->collision_sound.setVolume(50.0f);
+	utils::load_sound(this->collision_sound_buffer, "../assets/ball_smash.mp3");
+	utils::load_sound(this->end_sound_buffer, "../assets/game_over.mp3");
+	utils::load_sound(this->oob_sound_buffer, "../assets/out_of_bounds.mp3");
 
-	std::filesystem::path oob_sound_path("../assets/out_of_bounds.mp3");
-	if (!this->oob_sound_buffer.loadFromFile(oob_sound_path)) {
-		// Handle error - sound file not found
-		throw std::filesystem::filesystem_error("Could not open the OOB file.",
-												std::error_code());
-	}
+	this->collision_sound.setVolume(50.0f);
 }
 
 auto PongState::check_collision(sf::RectangleShape& one,
@@ -119,8 +111,16 @@ auto PongState::tick(const double& dt, sf::RenderWindow& window) -> bool {
 
 		window.display();
 
+		end_sound.play();
+
 		// Wait for 5 seconds to display the main menu again
 		sf::sleep(sf::seconds(5.0f));
+
+		// Clear out any prev events in the buffer
+		sf::Event event;
+		while (window.pollEvent(event)) {
+			continue;
+		}
 		return false;
 	}
 

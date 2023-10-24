@@ -22,7 +22,7 @@ auto Game::game_loop() -> void {
 
 	double delta_time = 0.0f;
 
-	Timer timer{};
+	utils::Timer timer{};
 
 	sf::Texture texture;
 	if (!texture.loadFromFile(

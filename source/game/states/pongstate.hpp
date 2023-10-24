@@ -59,4 +59,7 @@ private:
 
 	sf::SoundBuffer oob_sound_buffer;
 	sf::Sound oob_sound;
+
+	sf::SoundBuffer end_sound_buffer;
+	sf::Sound end_sound;
 };
