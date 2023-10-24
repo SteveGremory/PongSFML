@@ -16,7 +16,7 @@ Menu::Menu(const sf::Font& font, const sf::Vector2u dimensions)
 	start.set_position({dimensions.x * 0.5f, dimensions.y * 0.5f});
 	exit.set_position({dimensions.x * 0.5f, dimensions.y * 0.6f});
 
-	utils::load_sound(this->btn_sound_buffer, "../assets/button_select.mp3");
+	utils::load_sound(this->btn_sound_buffer, "./assets/button_select.mp3");
 	btn_sound.setVolume(40);
 }
 

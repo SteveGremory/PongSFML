@@ -25,7 +25,7 @@ auto Game::game_loop() -> void {
 	sf::RectangleShape darkening_rect;
 
 	if (!texture.loadFromFile(
-			std::filesystem::path("../assets/background.jpg"))) {
+			std::filesystem::path("./assets/background.jpg"))) {
 		throw std::filesystem::filesystem_error(
 			"Could not load in the background.", std::error_code());
 	}

@@ -12,7 +12,7 @@ constexpr sf::Vector2u DIMENSIONS{1280, 720};
 auto main() -> int {
 
 	// Hardcoded path to the font
-	const std::filesystem::path font_path("../assets/PressStart2P-Regular.ttf");
+	const std::filesystem::path font_path("./assets/PressStart2P-Regular.ttf");
 	// Initialise the font to be used
 	sf::Font font{};
 	if (!font.loadFromFile(font_path)) {

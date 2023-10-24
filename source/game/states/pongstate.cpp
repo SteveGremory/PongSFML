@@ -55,9 +55,9 @@ auto PongState::init_game(const sf::Vector2u& dimensions) -> void {
 
 auto PongState::init_sounds() -> void {
 	// Configure the sound
-	utils::load_sound(this->collision_sound_buffer, "../assets/ball_smash.mp3");
-	utils::load_sound(this->end_sound_buffer, "../assets/game_over.mp3");
-	utils::load_sound(this->oob_sound_buffer, "../assets/out_of_bounds.mp3");
+	utils::load_sound(this->collision_sound_buffer, "./assets/ball_smash.mp3");
+	utils::load_sound(this->end_sound_buffer, "./assets/game_over.mp3");
+	utils::load_sound(this->oob_sound_buffer, "./assets/out_of_bounds.mp3");
 
 	this->collision_sound.setVolume(50.0f);
 }
