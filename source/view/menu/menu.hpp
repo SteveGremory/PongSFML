@@ -1,6 +1,7 @@
 #pragma once
 
 #include "view/text/text.hpp"
+#include <array>
 #include <span>
 
 #include <SFML/Audio.hpp>
