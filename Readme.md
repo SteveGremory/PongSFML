@@ -2,6 +2,8 @@
 
 A classic Atari pong replica written in C++ using the SFML graphics/audio libraries.
 
+![demo](./assets/demo.gif)
+
 # Compilation
 
 To build the project, you _must_ clone it recursively, like so:
