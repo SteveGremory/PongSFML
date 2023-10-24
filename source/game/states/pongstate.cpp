@@ -1,7 +1,8 @@
 #include "pongstate.hpp"
 
 constexpr auto PLAYER_SPEED = 1000.0f;
-constexpr auto BALL_SPEED = 300.0f;
+constexpr auto BALL_SPEED = 400.0f;
+constexpr auto MAX_ROUNDS = 5;
 
 PongState::PongState(sf::Font& font)
 	: m_player_one({DIMENSIONS.x * 0.05f, DIMENSIONS.y * 0.5f}, DIMENSIONS.y),
@@ -14,12 +15,13 @@ PongState::PongState(sf::Font& font)
 	  m_winner_label("0", font, Pong::FontSize::FONT_MEDIUM),
 	  m_ball({DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.5f}, {20, 20},
 			 {BALL_SPEED, BALL_SPEED}) {
-
+	// Set both the players' scores' positions.
 	this->m_p1_score_label.set_position(
 		{DIMENSIONS.x * 0.2f, DIMENSIONS.x * 0.1f});
 	this->m_p2_score_label.set_position(
 		{DIMENSIONS.x * 0.8f, DIMENSIONS.x * 0.1f});
 
+	// Set the game over positions in advance.
 	this->m_game_over_label.set_position(
 		{DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.6f});
 	this->m_winner_label.set_position(
@@ -41,37 +43,50 @@ auto PongState::check_collision(sf::RectangleShape& one,
 	return collision_x && collision_y;
 }
 
+auto PongState::end_game() -> void {
+	int pt_diff = std::abs(m_p1_score - m_p2_score);
+	std::string winnerText;
+
+	if (m_p1_score > m_p2_score) {
+		winnerText = "P1 Wins by " + std::to_string(pt_diff) + " point(s)";
+	} else {
+		winnerText = "P2 Wins by " + std::to_string(pt_diff) + " point(s)";
+	}
+
+	m_winner_label.set_text(winnerText);
+
+	this->m_p1_score_label.set_text(std::to_string(this->m_p1_score));
+	this->m_p2_score_label.set_text(std::to_string(this->m_p2_score));
+
+	// Internal state cleanup
+	this->m_p1_score = 0;
+	this->m_p2_score = 0;
+
+	this->m_rounds = 1;
+}
+
+auto PongState::handle_scores_ball_reset(int& player_score,
+										 Pong::Text& score_label, Ball& ball,
+										 unsigned int& rounds) -> void {
+	player_score++;
+	rounds++;
+	score_label.set_text(std::to_string(player_score));
+	ball.reset({DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.5f},
+			   {BALL_SPEED, BALL_SPEED});
+}
+
 auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
 
-	if (this->m_rounds == 5) {
-		int pt_diff = 0;
-
-		// The game has ended
-		if (this->m_p1_score > this->m_p2_score) {
-			pt_diff = this->m_p1_score - this->m_p2_score;
-			this->m_winner_label.set_text("P1 Wins by " +
-										  std::to_string(pt_diff) + " points.");
-		} else {
-			pt_diff = this->m_p2_score - this->m_p1_score;
-			this->m_winner_label.set_text("P2 Wins!" + std::to_string(pt_diff) +
-										  " points.");
-		}
+	if (this->m_rounds == MAX_ROUNDS + 1) {
+		this->end_game();
 
 		window.draw(this->m_game_over_label.get_sfml_text());
 		window.draw(this->m_winner_label.get_sfml_text());
 
-		this->m_p1_score = 0;
-		this->m_p2_score = 0;
-
-		this->m_p1_score_label.set_text(std::to_string(this->m_p1_score));
-		this->m_p2_score_label.set_text(std::to_string(this->m_p2_score));
-
-		this->m_rounds = 0;
-
 		window.display();
 
+		// Wait for 5 seconds to display the main menu again
 		sf::sleep(sf::seconds(5.0f));
-
 		return false;
 	}
 
@@ -94,6 +109,7 @@ auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
 		}
 	}
 
+	// Player movement
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 		this->m_player_one.move(-PLAYER_SPEED * dt);
 	}
@@ -110,46 +126,41 @@ auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
 		this->m_player_two.move(PLAYER_SPEED * dt);
 	}
 
-	if (this->check_collision(this->m_ball.get_drawable(),
-							  this->m_player_one.get_drawable())) {
+	// Get SFML drawables all at once for later use.
+	sf::RectangleShape& ball_drawable = m_ball.get_drawable();
+	sf::RectangleShape& player_one_drawable = m_player_one.get_drawable();
+	sf::RectangleShape& player_two_drawable = m_player_two.get_drawable();
+
+	if (check_collision(ball_drawable, player_one_drawable)) {
+
 		// Left collision
-		m_ball.reverse_velocity(
-			this->m_player_one.get_drawable().getPosition());
-	}
+		m_ball.reverse_velocity(player_one_drawable.getPosition());
+	} else if (check_collision(ball_drawable, player_two_drawable)) {
 
-	if (this->check_collision(this->m_ball.get_drawable(),
-							  this->m_player_two.get_drawable())) {
 		// Right collision
-		m_ball.reverse_velocity(
-			this->m_player_two.get_drawable().getPosition());
+		m_ball.reverse_velocity(player_two_drawable.getPosition());
+	} else if (ball_drawable.getPosition().x <= 0.0f ||
+			   ball_drawable.getPosition().x + ball_drawable.getSize().x >=
+				   window.getSize().x) {
+
+		// Ball goes out of bounds
+		int& player_score =
+			(ball_drawable.getPosition().x <= 0.0f) ? m_p2_score : m_p1_score;
+		// Who's score is to be incremented?
+		Pong::Text& score_label = (ball_drawable.getPosition().x <= 0.0f)
+									  ? m_p2_score_label
+									  : m_p1_score_label;
+
+		handle_scores_ball_reset(player_score, score_label, m_ball, m_rounds);
+	} else {
+		// only move the ball if required
+		m_ball.move(dt, DIMENSIONS);
 	}
 
-	m_ball.move(dt, DIMENSIONS);
+	window.draw(ball_drawable);
 
-	if (m_ball.get_drawable().getPosition().x <= 0.0f) {
-		m_p2_score++;
-		this->m_rounds++;
-		this->m_p2_score_label.set_text(std::to_string(this->m_p2_score));
-
-		this->m_ball.reset({DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.5f},
-						   {BALL_SPEED, BALL_SPEED});
-
-	} else if (m_ball.get_drawable().getPosition().x +
-				   m_ball.get_drawable().getSize().x >=
-			   window.getSize().x) {
-
-		m_p1_score++;
-		this->m_rounds++;
-
-		this->m_p1_score_label.set_text(std::to_string(this->m_p1_score));
-		this->m_ball.reset({DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.5f},
-						   {BALL_SPEED, BALL_SPEED});
-	}
-
-	window.draw(this->m_ball.get_drawable());
-
-	window.draw(this->m_player_one.get_drawable());
-	window.draw(this->m_player_two.get_drawable());
+	window.draw(player_one_drawable);
+	window.draw(player_two_drawable);
 
 	window.draw(this->m_p1_score_label.get_sfml_text());
 	window.draw(this->m_p2_score_label.get_sfml_text());

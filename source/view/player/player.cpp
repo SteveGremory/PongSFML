@@ -10,10 +10,6 @@ Player::Player(const sf::Vector2f initial_position, const float max_height)
 	  m_rect_shape(sf::Vector2f(SPRITE_WIDTH, SPRITE_HEIGHT)) {
 
 	this->m_rect_shape.setPosition(initial_position);
-	auto rect = this->m_rect_shape.getLocalBounds();
-
-	// this->m_rect_shape.setOrigin(
-	//	{rect.left + rect.width / 2.0f, rect.top + rect.height / 2.0f});
 }
 
 Player::~Player() {}

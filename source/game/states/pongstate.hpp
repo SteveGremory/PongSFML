@@ -9,15 +9,30 @@
 
 class PongState : public GameState {
 public:
+	/**
+	 * @brief Inherited from GameState.
+	 */
 	PongState(sf::Font& font);
+
+	/**
+	 * @brief Inherited from GameState.
+	 */
 	~PongState() = default;
 
+	/**
+	 * @brief Inherited from GameState.
+	 */
 	auto tick(float dt, sf::RenderWindow& window) -> bool final;
+
+private:
+	auto end_game() -> void;
+
+	auto handle_scores_ball_reset(int& player_score, Pong::Text& score_label,
+								  Ball& ball, unsigned int& rounds) -> void;
 
 	auto check_collision(sf::RectangleShape& one, sf::RectangleShape& two)
 		-> bool;
 
-private:
 	Player m_player_one;
 	Player m_player_two;
 

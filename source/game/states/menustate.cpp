@@ -52,8 +52,6 @@ auto MenuState::tick(float, sf::RenderWindow& window) -> bool {
 	}
 
 	for (auto& item : this->m_menu.get_items()) {
-		// inside the main loop, between window.clear() and
-		// window.display()
 		window.draw(item.get_sfml_text());
 	}
 
