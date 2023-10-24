@@ -7,10 +7,6 @@ set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Clang tidy setup
-find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
-set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "-checks=*,-llvmlibc-*,-google-*,-fuchsia-*,-android-*,-altera-*,-abseil-*,-boost-*,-objc-*,-openmp-*,-zircon-*,-misc-include-cleaner")
-
 # Add SFML as a dependency
 add_subdirectory(deps/SFML)
 
@@ -32,6 +28,8 @@ target_link_libraries(pong PRIVATE
     sfml-audio
 )
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+message("-- Using libasan")
 # Enable address sanitizer and Extra warnings
 target_compile_options(pong PRIVATE
     -Wall -Wextra
@@ -39,6 +37,4 @@ target_compile_options(pong PRIVATE
     -fsanitize=leak
 )
 target_link_options(pong PRIVATE -fsanitize=address)
-
-# Use clang tidy to get even more warnings when in debug mode
-# set_target_properties(pong PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
+endif()
