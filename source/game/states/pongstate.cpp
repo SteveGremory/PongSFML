@@ -74,12 +74,12 @@ auto PongState::end_game() -> void {
 
 	m_winner_label.set_text(winnerText);
 
-	this->m_p1_score_label.set_text(std::to_string(this->m_p1_score));
-	this->m_p2_score_label.set_text(std::to_string(this->m_p2_score));
-
 	// Internal state cleanup
 	this->m_p1_score = 0;
 	this->m_p2_score = 0;
+
+	this->m_p1_score_label.set_text(std::to_string(this->m_p1_score));
+	this->m_p2_score_label.set_text(std::to_string(this->m_p2_score));
 
 	this->m_rounds = 1;
 

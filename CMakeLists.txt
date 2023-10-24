@@ -16,9 +16,6 @@ file(GLOB_RECURSE PONG_SOURCES
     source/*.cpp
 )
 
-# Copy the assets to the build folder
-file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
-
 # Create the project
 add_executable(pong ${PONG_SOURCES})
 target_include_directories(pong PRIVATE 
@@ -36,7 +33,13 @@ if (WIN32)
   add_custom_command(TARGET pong POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/deps/SFML/extlibs/bin/x64/openal32.dll $<TARGET_FILE_DIR:pong>
   )
+  add_custom_command(TARGET pong POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:pong>/assets
+  )
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT pong)
+
+else()
+    file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
 endif()
 
 
@@ -46,7 +49,6 @@ message("-- Using libasan")
 target_compile_options(pong PRIVATE
     -Wall -Wextra
     -fsanitize=address
-    -fsanitize=leak
 )
 target_link_options(pong PRIVATE -fsanitize=address)
 endif()
