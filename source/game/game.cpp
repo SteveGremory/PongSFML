@@ -1,6 +1,9 @@
 #include "game/game.hpp"
 #include "utils/timer.hpp"
 
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
+
 #include <iostream>
 
 /**
@@ -21,9 +24,22 @@ auto Game::game_loop() -> void {
 
 	Timer timer{};
 
+	sf::Texture texture;
+	if (!texture.loadFromFile(
+			std::filesystem::path("../assets/background.jpg"))) {
+		throw std::filesystem::filesystem_error(
+			"Could not load in the background.", std::error_code());
+	}
+	sf::Sprite sprite{texture};
+	sf::Vector2u size = texture.getSize();
+	sprite.setTexture(texture);
+	sprite.setOrigin(sf::Vector2f(sprite.getTexture().getSize() / 2u));
+	sprite.setPosition(this->m_window.getView().getCenter());
+
 	while (this->m_window.isOpen()) {
 		// clear the window with black color
 		this->m_window.clear(sf::Color::Black);
+		this->m_window.draw(sprite);
 
 		auto& current_state = this->m_states[this->m_current_state_idx];
 
