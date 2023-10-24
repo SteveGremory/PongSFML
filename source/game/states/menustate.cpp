@@ -2,7 +2,15 @@
 #include <iostream>
 
 MenuState::MenuState(const sf::Font& font, const sf::Vector2u dimensions)
-	: m_menu(font, dimensions) {}
+	: m_menu(font, dimensions), startup_sound(this->sound_buffer) {
+
+	std::filesystem::path collision_sound_path("../assets/beep_sound.mp3");
+	if (!this->sound_buffer.loadFromFile(collision_sound_path)) {
+		// Handle error - sound file not found
+		throw std::filesystem::filesystem_error("Could not open the beep file.",
+												std::error_code());
+	}
+}
 
 auto MenuState::tick(float, sf::RenderWindow& window) -> bool {
 
@@ -24,6 +32,7 @@ auto MenuState::tick(float, sf::RenderWindow& window) -> bool {
 
 			case sf::Keyboard::Scan::Enter:
 				if (this->m_menu.is_start_selected()) {
+					this->startup_sound.play();
 					return false;
 				} else {
 					this->should_exit = true;

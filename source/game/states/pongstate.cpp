@@ -14,7 +14,8 @@ PongState::PongState(sf::Font& font)
 	  m_game_over_label("Game over!", font, Pong::FontSize::FONT_BIG),
 	  m_winner_label("0", font, Pong::FontSize::FONT_MEDIUM),
 	  m_ball({DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.5f}, {20, 20},
-			 {BALL_SPEED, BALL_SPEED}) {
+			 {BALL_SPEED, BALL_SPEED}),
+	  collision_sound(this->collision_sound_buffer) {
 	// Set both the players' scores' positions.
 	this->m_p1_score_label.set_position(
 		{DIMENSIONS.x * 0.2f, DIMENSIONS.x * 0.1f});
@@ -26,6 +27,15 @@ PongState::PongState(sf::Font& font)
 		{DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.6f});
 	this->m_winner_label.set_position(
 		{DIMENSIONS.x * 0.5f, DIMENSIONS.y * 0.4f});
+
+	std::filesystem::path collision_sound_path("../assets/ball_smash.mp3");
+	if (!this->collision_sound_buffer.loadFromFile(collision_sound_path)) {
+		// Handle error - sound file not found
+		throw std::filesystem::filesystem_error(
+			"Could not open the collision file.", std::error_code());
+	}
+
+	this->collision_sound.setVolume(50.0f);
 }
 
 auto PongState::check_collision(sf::RectangleShape& one,
@@ -134,11 +144,13 @@ auto PongState::tick(const float dt, sf::RenderWindow& window) -> bool {
 	if (check_collision(ball_drawable, player_one_drawable)) {
 
 		// Left collision
-		m_ball.reverse_velocity(player_one_drawable.getPosition());
+		this->m_ball.reverse_velocity(player_one_drawable.getPosition());
+		this->collision_sound.play();
 	} else if (check_collision(ball_drawable, player_two_drawable)) {
 
 		// Right collision
-		m_ball.reverse_velocity(player_two_drawable.getPosition());
+		this->m_ball.reverse_velocity(player_two_drawable.getPosition());
+		this->collision_sound.play();
 	} else if (ball_drawable.getPosition().x <= 0.0f ||
 			   ball_drawable.getPosition().x + ball_drawable.getSize().x >=
 				   window.getSize().x) {

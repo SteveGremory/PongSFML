@@ -29,6 +29,7 @@ target_include_directories(pong PRIVATE
 # Link SFML
 target_link_libraries(pong PRIVATE
     sfml-graphics
+    sfml-audio
 )
 
 # Enable address sanitizer and Extra warnings

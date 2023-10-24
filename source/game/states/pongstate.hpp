@@ -5,6 +5,8 @@
 #include "view/player/player.hpp"
 #include "view/text/text.hpp"
 
+#include <SFML/Audio.hpp>
+
 #include <iostream>
 
 class PongState : public GameState {
@@ -48,4 +50,10 @@ private:
 	Pong::Text m_winner_label;
 
 	Ball m_ball;
+
+	// Load a sound buffer (replace with your sound file)
+	sf::SoundBuffer collision_sound_buffer;
+
+	// Create a sound object and set its buffer
+	sf::Sound collision_sound;
 };
