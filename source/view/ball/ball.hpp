@@ -40,13 +40,6 @@ public:
 		-> void;
 
 	/**
-	 * @brief Set the ball's position
-	 *
-	 * @param position - The position of the ball
-	 */
-	auto setpos(const sf::Vector2f& position) -> void;
-
-	/**
 	 * @brief Retrieves a reference to the SFML RectangleShape representing the
 	 * ball.
 	 *
@@ -64,7 +57,8 @@ public:
 	 * @param player_pos - The position of the player with which the ball
 	 * collides.
 	 */
-	auto reverse_velocity(const sf::Vector2f& player_pos) -> void;
+	auto reverse_velocity(const sf::Vector2f& player_pos, const float increment)
+		-> void;
 
 private:
 	sf::RectangleShape m_ball;

@@ -6,6 +6,7 @@
 constexpr auto PLAYER_SPEED = 1000.0f;
 constexpr auto BALL_SPEED = 600.0f;
 constexpr auto MAX_ROUNDS = 5;
+constexpr auto INC_VELOCITY = 50.f;
 
 constexpr auto SPRITE_HEIGHT = 120.0f;
 constexpr auto SPRITE_WIDTH = 10.0f;
@@ -167,12 +168,14 @@ auto PongState::tick(const double& dt, sf::RenderWindow& window) -> bool {
 	if (utils::check_collision(ball_drawable, player_one_drawable)) {
 
 		// Left collision
-		this->m_ball.reverse_velocity(player_one_drawable.getPosition());
+		this->m_ball.reverse_velocity(player_one_drawable.getPosition(),
+									  INC_VELOCITY);
 		this->collision_sound.play();
 	} else if (utils::check_collision(ball_drawable, player_two_drawable)) {
 
 		// Right collision
-		this->m_ball.reverse_velocity(player_two_drawable.getPosition());
+		this->m_ball.reverse_velocity(player_two_drawable.getPosition(),
+									  INC_VELOCITY);
 		this->collision_sound.play();
 	} else if (ball_drawable.getPosition().x <= 0.0f ||
 			   ball_drawable.getPosition().x + ball_drawable.getSize().x >=

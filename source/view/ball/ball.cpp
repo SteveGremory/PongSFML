@@ -25,10 +25,19 @@ auto Ball::move(double dt, const sf::Vector2f& window_dimensions) -> void {
 	this->m_ball.setPosition(this->m_position);
 }
 
-auto Ball::reverse_velocity(const sf::Vector2f& player_pos) -> void {
+auto Ball::reverse_velocity(const sf::Vector2f& player_pos,
+							const float increment) -> void {
 
-	// reverse horizontal velocity
+	// Reverse horizontal velocity
 	this->m_velocity.x = -this->m_velocity.x;
+
+	// Calculate the direction of the velocity
+	int xDirection = (this->m_velocity.x < 0.0f) ? -1 : 1;
+	int yDirection = (this->m_velocity.y < 0.0f) ? -1 : 1;
+
+	// Adjust velocity with the increment value
+	this->m_velocity.x += xDirection * increment;
+	this->m_velocity.y += yDirection * increment;
 
 	auto penetration = this->m_ball.getPosition().x - player_pos.x;
 
@@ -39,10 +48,6 @@ auto Ball::reverse_velocity(const sf::Vector2f& player_pos) -> void {
 };
 
 auto Ball::get_drawable() -> sf::RectangleShape& { return this->m_ball; }
-
-auto Ball::setpos(const sf::Vector2f& position) -> void {
-	this->m_position = position;
-}
 
 auto Ball::reset(const sf::Vector2f position, const sf::Vector2f velocity)
 	-> void {

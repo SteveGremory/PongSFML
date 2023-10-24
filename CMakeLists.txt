@@ -36,6 +36,7 @@ target_link_libraries(pong PRIVATE
 target_compile_options(pong PRIVATE
     -Wall -Wextra
     -fsanitize=address
+    -fsanitize=leak
 )
 target_link_options(pong PRIVATE -fsanitize=address)
 
